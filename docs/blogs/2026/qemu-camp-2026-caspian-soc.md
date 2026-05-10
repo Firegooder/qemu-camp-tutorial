@@ -43,7 +43,7 @@ memory_region_init_ram(machine->ram, NULL, "riscv_virt_board.ram",
 memory_region_add_subregion(system_memory, s->memmap[VIRT_DRAM].base,
                             machine->ram);
 
-// 外设: 需要绑定读写回调
+// 外设：需要绑定读写回调
 memory_region_init_io(&s->iomem, OBJECT(s), &pl011_ops, s, "pl011", 0x1000);
 sysbus_init_mmio(SYS_BUS_DEVICE(s), &s->iomem);  // 注册到 SysBus
 // 之后 sysbus_mmio_map 将其挂到全局地址空间
@@ -188,7 +188,7 @@ QEMU 中有**两种 IRQ 连接机制**，分别用于不同场景：
 // 设备端 realize:
 sysbus_init_irq(sbd, &s->irq);       // 注册 IRQ 输出（索引 0）
 
-// Board 端:
+// Board 端：
 sysbus_connect_irq(sbd, 0,            // 将设备的 IRQ[0]
     qdev_get_gpio_in(plic, 10));      // 连接到 PLIC 的 GPIO_IN[10]
 ```
@@ -241,7 +241,7 @@ GPIO.output[0] ──qdev_connect_gpio_out──→ LED.qdev_gpio_in[0]
 1. 使用 OOP 建模外设
 2. 使用 IRQ 拓扑连接
 
-!!! tips inline "芯片引脚+状态机实现"
+!!! tips inline "芯片引脚 + 状态机实现"
 
     - 寄存器
     - 状态变化
@@ -375,7 +375,7 @@ g233_pwm_create(addr, plic_irq);
 g233_wdt_create(addr, plic_irq);
 ```
 
-SPI 需要挂在两个 flash 芯片:
+SPI 需要挂在两个 flash 芯片：
 
 ```c
 // SPI 主控 — 返回 SSI 总线句柄
@@ -390,7 +390,7 @@ flash = qdev_new("w25x32");
 qdev_prop_set_uint8(flash, "cs", 1);          // CS1
 ssi_realize_and_unref(flash, spi_bus, &error_fatal);
 
-// CS 信号: SPI 主控的 GPIO 输出 → Flash 的 GPIO 输入
+// CS 信号：SPI 主控的 GPIO 输出 → Flash 的 GPIO 输入
 qdev_connect_gpio_out(spi_dev, 0,
     qdev_get_gpio_in_named(flash0_cs_dev, SSI_GPIO_CS, 0));
 qdev_connect_gpio_out(spi_dev, 1,
@@ -444,7 +444,7 @@ SPI 主控的内部职责:
 这也解释了为什么 SPI 的实现比其他设备多一个 `realize` 函数：
 
 ```c
-// 其他设备: instance_init 就够了
+// 其他设备：instance_init 就够了
 static void g233_gpio_init(Object *obj) { ... }     // 无 realize
 
 // SPI: 需要 realize 来创建 SSI 总线
